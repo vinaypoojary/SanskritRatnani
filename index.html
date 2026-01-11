@@ -3,34 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>सर्गः १ - Chapter 1 | Ramayana Book</title>
-    
+    <title>Ramayana Reader Clone</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
     <style>
+        /* --- General Styles --- */
         :root {
-            --primary-color: #e74c3c;
-            --sidebar-bg: #fdfdfd;
-            --text-dark: #2c3e50;
-            --text-light: #555;
-            --border-color: #eee;
-            --hover-bg: #fdedec;
+            --header-height: 60px;
+            --sidebar-width: 280px;
+            --primary-color: #f4f1ea; /* Light parchment color */
+            --accent-color: #8b4513;  /* Saddle Brown */
+            --text-color: #333;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
-            font-family: 'Lora', serif;
+            margin: 0;
+            font-family: 'Lora', sans-serif;
+            background-color: #fafafa;
+            color: var(--text-color);
             display: flex;
-            background-color: #ffffff;
-            color: var(--text-dark);
-            scroll-behavior: smooth;
+            flex-direction: column;
         }
 
         table {
             font-family: 'Lora', serif;
             font-size: 0.85rem;
-            width: 125%;
+            width: 80%;
             border-collapse: collapse;
             margin-top: 20px;
         }
@@ -45,666 +44,721 @@
             background-color: #f2f2f2;
         }
 
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
-            height: 100vh;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--border-color);
+        /* --- Fixed Upper Bar --- */
+        header {
+            height: var(--header-height);
+            background-color: var(--accent-color);
+            color: white;
             position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+            justify-content: space-between;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* --- Toggle Button --- */
+        #toggle-btn {
+            background: #fff;
+            color: var(--accent-color);
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        #toggle-btn:hover {
+            background: #eee;
+        }
+
+        /* --- Layout Container --- */
+        .container {
+            display: flex;
+            margin-top: var(--header-height);
+            min-height: calc(100vh - var(--header-height));
+        }
+
+        /* --- Sidebar --- */
+        nav {
+            width: var(--sidebar-width);
+            background-color: var(--primary-color);
+            border-right: 1px solid #ddd;
+            position: fixed;
+            top: var(--header-height);
+            bottom: 0;
             overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 900;
+        }
+
+        nav.hidden {
+            transform: translateX(-100%);
+        }
+
+        .sidebar-content {
             padding: 20px;
         }
 
-        .sidebar h2 {
-            font-size: 1.1rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
+        .sidebar-content h3 {
+            font-size: 1rem;
+            color: var(--accent-color);
+            border-bottom: 1px solid #ccc;
             padding-bottom: 10px;
-            border-bottom: 2px solid var(--primary-color);
         }
 
-        .meta-nav {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
+        .sidebar-content ul {
+            list-style: none;
+            padding: 0;
         }
 
-        .meta-nav a {
-            display: block;
-            padding: 8px 12px;
+        .sidebar-content li {
+            margin: 10px 0;
+        }
+
+        .sidebar-content a {
             text-decoration: none;
-            color: var(--text-dark);
+            color: #555;
             font-size: 0.95rem;
-            border-radius: 4px;
-            transition: 0.2s;
         }
 
-        .meta-nav a:hover {
-            background-color: var(--hover-bg);
-            color: var(--primary-color);
+        .sidebar-content a:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
         }
 
-        .nav-menu { list-style: none; }
-
-        .kanda-title {
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin: 20px 0 10px 0;
-            color: #95a5a6;
-            text-transform: uppercase;
+        /* --- Main Content Area --- */
+        main {
+            flex-grow: 1;
+            padding: 40px;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            max-width: 1200px;
         }
 
-        .chapter-list { list-style: none; padding-left: 10px; }
-        .chapter-list a {
-            text-decoration: none;
-            color: var(--text-dark);
-            font-size: 0.9rem;
-            display: block;
-            padding: 6px 0;
+        main.expanded {
+            margin-left: 0;
         }
 
-        .chapter-list a.active { color: var(--primary-color); font-weight: bold; }
-
-        /* Main Content */
-        .main-content {
-            margin-left: 280px;
-            padding: 40px 60px;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        section { margin-bottom: 80px; }
-
-        h1, h2 { font-family: 'Noto Serif Devanagari', serif; margin-bottom: 20px; }
-        
-        .info-box {
-            background: #f9f9f9;
-            padding: 25px;
+        .content-block {
+            background: white;
+            padding: 30px;
             border-radius: 8px;
-            border-left: 5px solid #ccc;
-            margin-bottom: 40px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            line-height: 1.8;
+        }
+
+        .sanskrit {
+            font-family: 'Noto Serif Devanagari', serif;
+            font-size: 2.0rem;
+            color: #000;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .translation {
+            color: #555;
+            font-style: italic;
+            margin-bottom: 30px;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 15px;
         }
 
         /* Verse Styles */
         .verse-card { margin-bottom: 50px; }
         .verse-num { color: var(--primary-color); font-weight: bold; display: block; margin-bottom: 10px; }
-        .sanskrit { font-family: 'Noto Serif Devanagari', serif; font-size: 2.0rem; line-height: 1.8; margin-bottom: 10px; }
         .translation { font-size: 1.05rem; background: #fffaf9; padding: 15px; border: 1px solid #feeae8; border-radius: 4px; }
 
-        @media (max-width: 850px) {
-            body { flex-direction: column; }
-            .sidebar { position: relative; width: 100%; height: auto; }
-            .main-content { margin-left: 0; padding: 20px; }
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            nav {
+                transform: translateX(-100%);
+            }
+            nav.active {
+                transform: translateX(0);
+            }
+            main {
+                margin-left: 0;
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
-        <h2>संस्कृतरत्नानि(Gems of Sanskrit)</h2>
-        
-        <nav class="meta-nav">
-            <a href="#intro">Introduction</a>
-            <a href="https://github.com/vinaypoojary/SanskritRatnani/issues" target="blank">Questions & Issues</a>
-        </nav>
+    <header>
+        <button id="toggle-btn">☰ </button>
+        <div class="header-title">संस्कृतरत्नानि (Gems of Sanskrit)</div>
+        <div style="width: 80px;"></div> </header>
 
-        <ul class="nav-menu">
-            <li class="kanda-title">Valmiki Ramayana</li>
-            <li>
-                <ul class="chapter-list">
-                    <li><a href="#BK1-1-1" class="active">१-१-१</a></li>
-                    <li><a href="#BK1-1-2">१-१-२</a></li>
+    <div class="container">
+        <nav id="sidebar">
+            <div class="sidebar-content">
+                <ul>
+                    <li><a href="#intro">Introduction</a></li>
                 </ul>
-            </li>
-            <li class="kanda-title">Bhagavad Gita</li>
-            <li>
-                <ul class="chapter-list">
+                <ul>
+                    <li><a href="https://github.com/vinaypoojary/SanskritRatnani/issues" target="blank">Questions & Issues</a></li>
+                </ul>
+                <br>
+        
+                <h3>Mantra</h3>     
+                <ul>
+                    <li><a href="#MMM">Maha Mrityunjaya Mantra</a></li>
+                </ul>
+
+                <h3>Bhagavad Gita</h3>     
+                <ul>
                     <li><a href="#BG1-1">१-१</a></li>
                 </ul>
-            </li>
-            <li class="kanda-title">Upanishad</li>
-            <li>
-                <ul class="chapter-list">
-                    <li><a href="#">Isha Upanishad</a></li>
+
+                <h3>Ramayan</h3>
+                <p>Bala Kanda</p>
+                <ul>
+                    <li><a href="#BK1-1-1">१-१-१</a></li>
+                    <li><a href="#BK1-1-2">१-१-२</a></li>
                 </ul>
-            </li>
-            <li class="kanda-title">Mantra</li>
-            <li>
-                <ul class="chapter-list">
-                    <li><a href="#Mantra1">Maha Mrityunjaya Mantra</a></li>
-                </ul>
-            </li>
-
-        </ul>
-    </aside>
-
-    <main class="main-content">
-        
-        <section id="intro">
-            <h1>Introduction</h1>
-            <div class="info-box">
-                <p>Hello everyone! I am Vinay Poojary, a dedicated student and enthusiast of Sanskrit literature. As I progress in my studies, my goal is to provide detailed grammatical analyses of Mantras, Shlokas, and Subhashitas. After going through many websites/blogs I prefer presenting my findings in a tabular format to ensure the breakdowns are clear and easy to follow. Let me know if you have any suggestion or findings. </p>
-                <br>
-                <p>Just like to quote this famous Sanskrit shloka from Bhagavad Gita (Chapter 6, Verse 5)</p>
-                <p><strong>उद्धरेदात्मनात्मानं नात्मानमवसादयेत् । आत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः ॥</strong></p>
-                <p>"One should lift oneself by oneself; one should not degrade oneself. For the self is the only friend of the self, and the self is the only enemy of the self."</p>
             </div>
-        </section>
+        </nav>
 
-        <hr style="margin-bottom: 40px; border: 0; border-top: 1px solid #eee;">
+        <main id="main-content">
 
-        <section id="qa">
-            <h1>General Q&A</h1>
-            <div class="info-box" style="border-left-color: var(--primary-color);">
-                <p><strong>Q: Do you incorporate AI into your grammatical analysis process?</strong><br>
-                A: I use AI occasionally as a supplemental resource when I hit a roadblock. However, I don't rely on it blindly; because AI can be prone to errors, I always perform my own rigorous analysis to ensure accuracy.</p>
-                <br>
-                <p><strong>Q: How can I report an error in the text?</strong><br>
-                A: You can contribute or report issues via the GitHub repository linked in the official footer.</p>
+
+            <div class="content-block">
+
+                <section id="intro">
+                    <h1>Introduction</h1>
+                    <div class="info-box">
+                        <p>Hello everyone! I am Vinay Poojary, a dedicated student and enthusiast of Sanskrit literature. As I progress in my studies, my goal is to document grammatical analyses of Mantras, Shlokas, and Subhashitas etc. After going through many websites/blogs I prefer presenting my findings in a tabular format to ensure the breakdowns are clear and easy to follow. Let me know if you have any suggestion or findings. </p>
+                        <br>
+                        <p>Lastly like to quote this famous Sanskrit shloka from Bhagavad Gita (Chapter 6, Verse 5)</p>
+                        <p><strong>उद्धरेदात्मनात्मानं नात्मानमवसादयेत् । आत्मैव ह्यात्मनो बन्धुरात्मैव रिपुरात्मनः ॥</strong></p>
+                        <p>"One should lift oneself by oneself; one should not degrade oneself. For the self is the only friend of the self, and the self is the only enemy of the self."</p>
+                    </div>
+                </section>
+                <hr>
+
+                <section id="Mantra1">
+                    <p style="color: #999; font-size: 1.2rem; text-transform: uppercase;">Maha Mrityunjaya Mantra</p>
+                    <h2 id="MMM">-</h2>
+                    
+                    <div class="verse-card">
+                        <span class="verse-num"></span>
+                        <p class="sanskrit">ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम् ।<br>उर्वारुकमिव बन्धनान् मृत्योर्मुक्षीय मामृतात् ॥</p>
+                        <div class="translation">
+                            <strong>Translation:</strong> (We) worship the Three-eyed Lord, who is fragrant and the nourisher of all growth. May He liberate me from death, just as a cucumber is released from its bondage (the vine), but may He never separate me from immortality.
+                        </div>
+                        <p>Table 1: Nouns</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>पदम् (Word)</th>
+                                    <th>प्रातिपदिकम् (Base)</th>
+                                    <th>लिङ्गम् (Gender)</th>
+                                    <th>विभक्तिः (Case)</th>
+                                    <th>वचनम् (Number)</th>
+                                    <th>अर्थः (English)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>त्र्यम्बकम्</td>
+                                    <td>त्र्यम्बक</td>
+                                    <td>पुंल्लिङ्गम्</td>
+                                    <td>द्वितीया</td>
+                                    <td>एकवचनम्</td>
+                                    <td>To the three-eyed one</td>
+                                </tr>
+                                <tr>
+                                    <td>सुगन्धिम्</td>
+                                    <td>सुगन्धि</td>
+                                    <td>पुंल्लिङ्गम्</td>
+                                    <td>द्वितीया</td>
+                                    <td>एकवचनम्</td>
+                                    <td>To the fragrant one</td>
+                                </tr>
+                                <tr>
+                                    <td>पुष्टिवर्धनम्</td>
+                                    <td>पुष्टिवर्धन</td>
+                                    <td>पुंल्लिङ्गम्</td>
+                                    <td>द्वितीया</td>
+                                    <td>एकवचनम्</td>
+                                    <td>To the nourisher of growth</td>
+                                </tr>
+                                <tr>
+                                    <td>उर्वारुकम्</td>
+                                    <td>उर्वारुक</td>
+                                    <td>नपुंसकलिङ्गम्</td>
+                                    <td>द्वितीया</td>
+                                    <td>एकवचनम्</td>
+                                    <td>The cucumber</td>
+                                </tr>
+                                <tr>
+                                    <td>बन्धनात्</td>
+                                    <td>बन्धन</td>
+                                    <td>नपुंसकलिङ्गम्</td>
+                                    <td>पञ्चमी</td>
+                                    <td>एकवचनम्</td>
+                                    <td>From bondage/attachment</td>
+                                </tr>
+                                <tr>
+                                    <td>मृत्योः</td>
+                                    <td>मृत्यु</td>
+                                    <td>पुंल्लिङ्गम्</td>
+                                    <td>पञ्चमी</td>
+                                    <td>एकवचनम्</td>
+                                    <td>From death</td>
+                                </tr>
+                                <tr>
+                                    <td>अमृतात्</td>
+                                    <td>अमृत</td>
+                                    <td>नपुंसकलिङ्गम्</td>
+                                    <td>पञ्चमी</td>
+                                    <td>एकवचनम्</td>
+                                    <td>From immortality</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br>
+
+                        <p>Table 2: Verbs</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>क्रियापदम् (Verb)</th>
+                                    <th>धातुः (Root)</th>
+                                    <th>लकारः (Tense/Mood)</th>
+                                    <th>पदम् (Voice)</th>
+                                    <th>पुरुषः (Person)</th>
+                                    <th>वचनम् (Number)</th>
+                                    <th>अर्थः (Meaning)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>यजामहे</td>
+                                    <td>यज् (to worship)</td>
+                                    <td>लट्-लकारः</td>
+                                    <td>आत्मनेपदम्</td>
+                                    <td>उत्तम-पुरुषः</td>
+                                    <td>बहुवचनम्</td>
+                                    <td>We worship</td>
+                                </tr>
+                                <tr>
+                                    <td>मुक्षीय</td>
+                                    <td>मुच् (to release)</td>
+                                    <td>आशीर्लिङ्-लकारः</td>
+                                    <td>आत्मनेपदम्</td>
+                                    <td>उत्तम-पुरुषः</td>
+                                    <td>एकवचनम्</td>
+                                    <td>May I be liberated</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br>
+
+                        <p>Table 3: Samāsa</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>समस्तपदम्</th>
+                                    <th>पूर्वपदम् (प्रकारः)</th>
+                                    <th>उत्तरपदम् (प्रकारः)</th>
+                                    <th>समास-प्रकारः</th>
+                                    <th>Meaning (English)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>त्र्यम्बकम्</td>
+                                    <td>त्रि (संख्यावाचकः)</td>
+                                    <td>अम्बक (संज्ञा)</td>
+                                    <td>बहुव्रीहिः</td>
+                                    <td>He who has three eyes.</td>
+                                </tr>
+                                <tr>
+                                    <td>सुगन्धिम्</td>
+                                    <td>सु (उपसर्गः)</td>
+                                    <td>गन्धि (संज्ञा)</td>
+                                    <td>बहुव्रीहिः</td>
+                                    <td>One who possesses fragrance.</td>
+                                </tr>
+                                <tr>
+                                    <td>पुष्टिवर्धनम्</td>
+                                    <td>पुष्टि (संज्ञा)</td>
+                                    <td>वर्धन (कृदन्तः - संज्ञा)</td>
+                                    <td>षष्ठी-तत्पुरुषः</td>
+                                    <td>The nourisher of prosperity.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br>
+
+                        <p>Table 4: Sandhi</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>सन्धियुक्त-पदम्</th>
+                                    <th>विच्छेदः (Word Split)</th>
+                                    <th>विच्छेद-अर्थः (Meaning)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>उर्वारुकमिव</td>
+                                    <td>उर्वारुकम् + इव</td>
+                                    <td>Cucumber + like</td>
+                                </tr>
+                                <tr>
+                                    <td>बन्धनान्मृत्योः</td>
+                                    <td>बन्धनात् + मृत्योः</td>
+                                    <td>From bondage + from death</td>
+                                </tr>
+                                <tr>
+                                    <td>मृत्योर्मुक्षीय</td>
+                                    <td>मृत्योः + मुक्षीय</td>
+                                    <td>From death + may I be liberated</td>
+                                </tr>
+                                <tr>
+                                    <td>मामृतात्</td>
+                                    <td>मा + अमृतात्</td>
+                                    <td>Not + from immortality</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    <br>
+                    <div class="anvaya-section">
+                        <p>अन्वय (Prose Order) - (वयम्) सुगन्धिं पुष्टिवर्धनं त्र्यम्बकं यजामहे। उर्वारुकम् इव बन्धनात् मृत्योः मुक्षीय, अमृतात् मा (मुक्षीय)।</p>
+                    </div>
+                </div>
+                </section>
+                <hr>
+
+                <!---------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+                <section id="BGChapter1">
+                    <p style="color: #999; font-size: 1.2rem; text-transform: uppercase;">Arjun Viṣhād Yog</p>
+                    <h2 id="BG1-1">॥१-१॥</h2>
+                    <div class="verse-card">
+                        <p class="sanskrit">धृतराष्ट्र उवाच ।<br>धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः ।<br>मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय ॥</p>
+                        <div class="translation">
+                            <strong>Translation:</strong> Dhritarashtra said: O Sanjay, after gathering on the holy field of Kurukshetra, and desiring to fight, what did my sons and the sons of Pandu do?
+                        </div>
+                    </div>
+                </section>
+                <hr>
+                <!---------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+
+                <section id="chapter1">
+                    <p style="color: #999; font-size: 1.2rem; text-transform: uppercase;">Bala Kanda</p>
+                    
+                    <div class="verse-card">
+                        <h2 id="BK1-1-1" >॥१-१-१॥</h2>
+                        <p class="sanskrit">तपःस्वाध्यायनिरतं तपस्वी वाग्विदां वरम् ।<br>नारदं परिपप्रच्छ वाल्मीकिर्मुनिपुङ्गवम् ॥</p>
+                        <div class="translation">
+                            <strong>Translation:</strong> Ascetic Valmiki enquired of Narada, preeminent among the sages ever engaged in the practice of religious austerities or study of the Vedas and best among the eloquent.
+                        </div>
+                        <p>1. Nouns</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>पदम् (Word)</th>
+                                    <th>प्रातिपदिकम् (Stem)</th>
+                                    <th>लिङ्गम् (Gender)</th>
+                                    <th>विभक्तिः (Case)</th>
+                                    <th>वचनम् (Number)</th>
+                                    <th>अर्थः (English)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>तपस्स्वाध्यायनिरतम्</td>
+                                    <td>तपस्स्वाध्यायनिरत</td>
+                                    <td>पुंलिङ्गम्</td>
+                                    <td>द्वितीया</td>
+                                    <td>एकवचनम्</td>
+                                    <td>Devoted to penance and study</td>
+                                </tr>
+                                <tr>
+                                    <td>तपस्वी</td>
+                                    <td>तपस्विन्</td>
+                                    <td>पुंलिङ्गम्</td>
+                                    <td>प्रथमा</td>
+                                    <td>एकवचनम्</td>
+                                    <td>The ascetic (Valmiki)</td>
+                                </tr>
+                                <tr>
+                                    <td>वाग्विदाम्</td>
+                                    <td>वाग्विद्</td>
+                                    <td>पुंलिङ्गम्</td>
+                                    <td>षष्ठी</td>
+                                    <td>बहुवचनम्</td>
+                                    <td>Among the eloquent</td>
+                                </tr>
+                                <tr>
+                                    <td>वरम्</td>
+                                    <td>वर</td>
+                                    <td>पुंलिङ्गम्</td>
+                                    <td>द्वितीया</td>
+                                    <td>एकवचनम्</td>
+                                    <td>The best / pre-eminent one</td>
+                                </tr>
+                                <tr>
+                                    <td>नारदम्</td>
+                                    <td>नारद</td>
+                                    <td>पुंलिङ्गम्</td>
+                                    <td>द्वितीया</td>
+                                    <td>एकवचनम्</td>
+                                    <td>Narada</td>
+                                </tr>
+                                <tr>
+                                    <td>वाल्मीकिः</td>
+                                    <td>वाल्मीकि</td>
+                                    <td>पुंलिङ्गम्</td>
+                                    <td>प्रथमा</td>
+                                    <td>एकवचनम्</td>
+                                    <td>Valmiki</td>
+                                </tr>
+                                <tr>
+                                    <td>मुनिपुङ्गवम्</td>
+                                    <td>मुनिपुङ्गव</td>
+                                    <td>पुंलिङ्गम्</td>
+                                    <td>द्वितीया</td>
+                                    <td>एकवचनम्</td>
+                                    <td>Foremost among sages</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br>
+
+                        <p>2. Verbs</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>क्रियापदम् (Verb)</th>
+                                    <th>धातुः (Root)</th>
+                                    <th>लकारः (Tense)</th>
+                                    <th>पदम् (Voice)</th>
+                                    <th>पुरुषः (Person)</th>
+                                    <th>वचनम् (Number)</th>
+                                    <th>अर्थः (Meaning)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>परिपप्रच्छ</td>
+                                    <td>परि + √प्रच्छ्</td>
+                                    <td>लिट्-लकारः</td>
+                                    <td>परस्मैपदम्</td>
+                                    <td>प्रथम-पुरुषः</td>
+                                    <td>एकवचनम्</td>
+                                    <td>Inquired / Asked</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br>
+
+                        <p>3. Samāsa (Compounds)</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>समस्तपदम्</th>
+                                    <th>पूर्वपदम्</th>
+                                    <th>उत्तरपदम्</th>
+                                    <th>समास-प्रकारः</th>
+                                    <th>Meaning (English)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>तपस्स्वाध्यायनिरतम्</td>
+                                    <td>तपस्स्वाध्याय</td>
+                                    <td>निरत (कृदन्तः)</td>
+                                    <td>सप्तमी-तत्पुरुषः</td>
+                                    <td>Absorbed in penance and study</td>
+                                </tr>
+                                <tr>
+                                    <td>वाग्विदाम्</td>
+                                    <td>वाच्</td>
+                                    <td>विद् (कृदन्तः)</td>
+                                    <td>उपपद-तत्पुरुषः</td>
+                                    <td>Knowers of speech</td>
+                                </tr>
+                                <tr>
+                                    <td>मुनिपुङ्गवम्</td>
+                                    <td>मुनि</td>
+                                    <td>पुङ्गव</td>
+                                    <td>सप्तमी-तत्पुरुषः</td>
+                                    <td>The best among sages</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br>
+
+                        <p>4. Sandhi</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>सन्धियुक्त-पदम्</th>
+                                    <th>विच्छेदः (Split)</th>
+                                    <th>विच्छेद-अर्थः (Meaning)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>तपस्स्वाध्याय-</td>
+                                    <td>तपः + स्वाध्याय</td>
+                                    <td>Penance + Self-study</td>
+                                </tr>
+                                <tr>
+                                    <td>वाल्मीकिर्मुनिपुङ्गवम्</td>
+                                    <td>वाल्मीकिः + मुनिपुङ्गवम्</td>
+                                    <td>Valmiki + the foremost sage</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <br>
+                        <div class="anvaya-section">
+                            <p>अन्वय (Prose Order) - तपस्वी वाल्मीकिः तपस्-स्वाध्याय-निरतं वाग्विदां वरं मुनि-पुङ्गवं नारदं परिपप्रच्छ ।</p>
+                        </div>
+                        
+
+
+                    </div>
+
+                    <div class="verse-card">
+                        <h2 id="BK1-1-2" >॥१-१-२॥</h2>
+                        <p class="sanskrit">कोन्वस्मिन्सांप्रतं लोके गुणवान् कश्च वीर्यवान् ।<br>धर्मज्ञश्च कृतज्ञश्च सत्यवाक्यो दृढव्रतः ॥</p>
+                        <div class="translation">
+                            <strong>Translation:</strong> Who in this world lives today endowed with excellent qualities, prowess, righteousness, gratitude, truthfulness and firmness in his vows?
+                        </div>
+
+                        <p class="section-title">1. Nouns</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>पदम् (Word)</th>
+                                    <th>प्रातिपदिकम् (Base)</th>
+                                    <th>लिङ्गम् (Gender)</th>
+                                    <th>विभक्तिः (Case)</th>
+                                    <th>वचनम् (Number)</th>
+                                    <th>अर्थः (English)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>कः</td><td>किम्</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Who</td></tr>
+                                <tr><td>अस्मिन्</td><td>इदम्</td><td>Masc</td><td>7th (Saptamī)</td><td>Singular</td><td>In this</td></tr>
+                                <tr><td>लोके</td><td>लोक</td><td>Masc</td><td>7th (Saptamī)</td><td>Singular</td><td>In the world</td></tr>
+                                <tr><td>गुणवान्</td><td>गुणवत्</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Virtuous</td></tr>
+                                <tr><td>वीर्यवान्</td><td>वीर्यवत्</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Powerful</td></tr>
+                                <tr><td>धर्मज्ञः</td><td>धर्मज्ञ</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Knower of Dharma</td></tr>
+                                <tr><td>कृतज्ञः</td><td>कृतज्ञ</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Grateful</td></tr>
+                                <tr><td>सत्यवाक्यः</td><td>सत्यवाक्य</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Truthful</td></tr>
+                                <tr><td>दृढव्रतः</td><td>दृढव्रत</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Firm in resolve</td></tr>
+                            </tbody>
+                        </table>
+                        <br>
+
+                        <p class="section-title">2. Verbs</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>क्रियापदम् (Verb)</th>
+                                    <th>धातुः (Root)</th>
+                                    <th>लकारः (Tense)</th>
+                                    <th>पदम् (Voice)</th>
+                                    <th>पुरुषः (Person)</th>
+                                    <th>वचनम् (Number)</th>
+                                    <th>अर्थः (Meaning)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>अस्ति (Implied)</td>
+                                    <td>अस्</td>
+                                    <td>लट् (Present)</td>
+                                    <td>Parasmaipada</td>
+                                    <td>Prathama</td>
+                                    <td>Singular</td>
+                                    <td>Is</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br>
+
+                        <p class="section-title">3. Samāsa (Compounds)</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>समस्तपदम्</th>
+                                    <th>पूर्वपदम्</th>
+                                    <th>उत्तरपदम्</th>
+                                    <th>समास-प्रकारः</th>
+                                    <th>Meaning</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>धर्मज्ञः</td><td>धर्म</td><td>ज्ञ (कृदन्तः)</td><td>Upapada-Tatpuruṣa</td><td>Knower of Dharma</td></tr>
+                                <tr><td>कृतज्ञः</td><td>कृत</td><td>ज्ञ (कृदन्तः)</td><td>Upapada-Tatpuruṣa</td><td>Grateful</td></tr>
+                                <tr><td>सत्यवाक्यः</td><td>सत्य</td><td>वाक्य</td><td>Bahuvrīhi</td><td>One of true speech</td></tr>
+                                <tr><td>दृढव्रतः</td><td>दृढ</td><td>व्रत</td><td>Bahuvrīhi</td><td>One of firm vows</td></tr>
+                            </tbody>
+                        </table>
+                        <br>
+
+                        <p class="section-title">4. Sandhi</p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>सन्धियुक्त-पदम्</th>
+                                    <th>विच्छेदः (Split)</th>
+                                    <th>विच्छेद-अर्थः (Meaning)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>को नु</td><td>कः + नु</td><td>Who + (particle)</td></tr>
+                                <tr><td>कोन्वस्मिन्</td><td>को नु + अस्मिन्</td><td>Who + in this</td></tr>
+                                <tr><td>गुणवान्कश्च</td><td>गुणवान् + कः + च</td><td>Virtuous + who + and</td></tr>
+                                <tr><td>धर्मज्ञश्च</td><td>धर्मज्ञः + च</td><td>Knower of dharma + and</td></tr>
+                            </tbody>
+                        </table>
+
+                        <br>
+                        <div class="anvaya-section">
+                            <p>अन्वय (Prose Order) - अस्मिन् लोके साम्प्रतं गुणवान् कः नु? वीर्यवान् च, धर्मज्ञः च, कृतज्ञः च, सत्यवाक्यः च, दृढव्रतः च कः (अस्ति)? ।</p>
+                        </div>
+
+                    </div>
+                </section>
+
             </div>
-        </section>
+        </main>
+    </div>
 
-        <section id="chapter1">
-            <p style="color: #999; font-size: 1.2rem; text-transform: uppercase;">Bala Kanda</p>
-            <h1>सर्गः १ (Chapter 1)</h1>
+    <script>
+        const toggleBtn = document.getElementById('toggle-btn');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+
+        toggleBtn.addEventListener('click', () => {
+            // Toggle classes for desktop (sliding content)
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('expanded');
             
-            <div class="verse-card">
-                <span id="BK1-1-1" class="verse-num">१-१-१</span>
-                <p class="sanskrit">तपःस्वाध्यायनिरतं तपस्वी वाग्विदां वरम् ।<br>नारदं परिपप्रच्छ वाल्मीकिर्मुनिपुङ्गवम् ॥१-१-१॥</p>
-                <div class="translation">
-                    <strong>Translation:</strong> Ascetic Valmiki enquired of Narada, preeminent among the sages ever engaged in the practice of religious austerities or study of the Vedas and best among the eloquent.
-                </div>
-                <br>
-                <p>1. Nouns</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>पदम् (Word)</th>
-                            <th>प्रातिपदिकम् (Stem)</th>
-                            <th>लिङ्गम् (Gender)</th>
-                            <th>विभक्तिः (Case)</th>
-                            <th>वचनम् (Number)</th>
-                            <th>अर्थः (English)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>तपस्स्वाध्यायनिरतम्</td>
-                            <td>तपस्स्वाध्यायनिरत</td>
-                            <td>पुंलिङ्गम्</td>
-                            <td>द्वितीया</td>
-                            <td>एकवचनम्</td>
-                            <td>Devoted to penance and study</td>
-                        </tr>
-                        <tr>
-                            <td>तपस्वी</td>
-                            <td>तपस्विन्</td>
-                            <td>पुंलिङ्गम्</td>
-                            <td>प्रथमा</td>
-                            <td>एकवचनम्</td>
-                            <td>The ascetic (Valmiki)</td>
-                        </tr>
-                        <tr>
-                            <td>वाग्विदाम्</td>
-                            <td>वाग्विद्</td>
-                            <td>पुंलिङ्गम्</td>
-                            <td>षष्ठी</td>
-                            <td>बहुवचनम्</td>
-                            <td>Among the eloquent</td>
-                        </tr>
-                        <tr>
-                            <td>वरम्</td>
-                            <td>वर</td>
-                            <td>पुंलिङ्गम्</td>
-                            <td>द्वितीया</td>
-                            <td>एकवचनम्</td>
-                            <td>The best / pre-eminent one</td>
-                        </tr>
-                        <tr>
-                            <td>नारदम्</td>
-                            <td>नारद</td>
-                            <td>पुंलिङ्गम्</td>
-                            <td>द्वितीया</td>
-                            <td>एकवचनम्</td>
-                            <td>Narada</td>
-                        </tr>
-                        <tr>
-                            <td>वाल्मीकिः</td>
-                            <td>वाल्मीकि</td>
-                            <td>पुंलिङ्गम्</td>
-                            <td>प्रथमा</td>
-                            <td>एकवचनम्</td>
-                            <td>Valmiki</td>
-                        </tr>
-                        <tr>
-                            <td>मुनिपुङ्गवम्</td>
-                            <td>मुनिपुङ्गव</td>
-                            <td>पुंलिङ्गम्</td>
-                            <td>द्वितीया</td>
-                            <td>एकवचनम्</td>
-                            <td>Foremost among sages</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <br>
-
-                <p>2. Verbs</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>क्रियापदम् (Verb)</th>
-                            <th>धातुः (Root)</th>
-                            <th>लकारः (Tense)</th>
-                            <th>पदम् (Voice)</th>
-                            <th>पुरुषः (Person)</th>
-                            <th>वचनम् (Number)</th>
-                            <th>अर्थः (Meaning)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>परिपप्रच्छ</td>
-                            <td>परि + √प्रच्छ्</td>
-                            <td>लिट्-लकारः</td>
-                            <td>परस्मैपदम्</td>
-                            <td>प्रथम-पुरुषः</td>
-                            <td>एकवचनम्</td>
-                            <td>Inquired / Asked</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <br>
-
-                <p>3. Samāsa (Compounds)</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>समस्तपदम्</th>
-                            <th>पूर्वपदम्</th>
-                            <th>उत्तरपदम्</th>
-                            <th>समास-प्रकारः</th>
-                            <th>Meaning (English)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>तपस्स्वाध्यायनिरतम्</td>
-                            <td>तपस्स्वाध्याय</td>
-                            <td>निरत (कृदन्तः)</td>
-                            <td>सप्तमी-तत्पुरुषः</td>
-                            <td>Absorbed in penance and study</td>
-                        </tr>
-                        <tr>
-                            <td>वाग्विदाम्</td>
-                            <td>वाच्</td>
-                            <td>विद् (कृदन्तः)</td>
-                            <td>उपपद-तत्पुरुषः</td>
-                            <td>Knowers of speech</td>
-                        </tr>
-                        <tr>
-                            <td>मुनिपुङ्गवम्</td>
-                            <td>मुनि</td>
-                            <td>पुङ्गव</td>
-                            <td>सप्तमी-तत्पुरुषः</td>
-                            <td>The best among sages</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <br>
-
-                <p>4. Sandhi</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>सन्धियुक्त-पदम्</th>
-                            <th>विच्छेदः (Split)</th>
-                            <th>विच्छेद-अर्थः (Meaning)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>तपस्स्वाध्याय-</td>
-                            <td>तपः + स्वाध्याय</td>
-                            <td>Penance + Self-study</td>
-                        </tr>
-                        <tr>
-                            <td>वाल्मीकिर्मुनिपुङ्गवम्</td>
-                            <td>वाल्मीकिः + मुनिपुङ्गवम्</td>
-                            <td>Valmiki + the foremost sage</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <br>
-                <div class="anvaya-section">
-                    <p>अन्वय (Prose Order) - तपस्वी वाल्मीकिः तपस्-स्वाध्याय-निरतं वाग्विदां वरं मुनि-पुङ्गवं नारदं परिपप्रच्छ ।</p>
-                </div>
-                
-
-
-            </div>
-
-            <div class="verse-card">
-                <span id="BK1-1-2" class="verse-num">१-१-२</span>
-                <p class="sanskrit">कोन्वस्मिन्सांप्रतं लोके गुणवान् कश्च वीर्यवान् ।<br>धर्मज्ञश्च कृतज्ञश्च सत्यवाक्यो दृढव्रतः ॥१-१-२॥</p>
-                <div class="translation">
-                    <strong>Translation:</strong> Who in this world lives today endowed with excellent qualities, prowess, righteousness, gratitude, truthfulness and firmness in his vows?
-                </div>
-                <br>
-
-                <p class="section-title">1. Nouns</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>पदम् (Word)</th>
-                            <th>प्रातिपदिकम् (Base)</th>
-                            <th>लिङ्गम् (Gender)</th>
-                            <th>विभक्तिः (Case)</th>
-                            <th>वचनम् (Number)</th>
-                            <th>अर्थः (English)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>कः</td><td>किम्</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Who</td></tr>
-                        <tr><td>अस्मिन्</td><td>इदम्</td><td>Masc</td><td>7th (Saptamī)</td><td>Singular</td><td>In this</td></tr>
-                        <tr><td>लोके</td><td>लोक</td><td>Masc</td><td>7th (Saptamī)</td><td>Singular</td><td>In the world</td></tr>
-                        <tr><td>गुणवान्</td><td>गुणवत्</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Virtuous</td></tr>
-                        <tr><td>वीर्यवान्</td><td>वीर्यवत्</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Powerful</td></tr>
-                        <tr><td>धर्मज्ञः</td><td>धर्मज्ञ</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Knower of Dharma</td></tr>
-                        <tr><td>कृतज्ञः</td><td>कृतज्ञ</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Grateful</td></tr>
-                        <tr><td>सत्यवाक्यः</td><td>सत्यवाक्य</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Truthful</td></tr>
-                        <tr><td>दृढव्रतः</td><td>दृढव्रत</td><td>Masc</td><td>1st (Prathamā)</td><td>Singular</td><td>Firm in resolve</td></tr>
-                    </tbody>
-                </table>
-                <br>
-
-                <p class="section-title">2. Verbs</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>क्रियापदम् (Verb)</th>
-                            <th>धातुः (Root)</th>
-                            <th>लकारः (Tense)</th>
-                            <th>पदम् (Voice)</th>
-                            <th>पुरुषः (Person)</th>
-                            <th>वचनम् (Number)</th>
-                            <th>अर्थः (Meaning)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>अस्ति (Implied)</td>
-                            <td>अस्</td>
-                            <td>लट् (Present)</td>
-                            <td>Parasmaipada</td>
-                            <td>Prathama</td>
-                            <td>Singular</td>
-                            <td>Is</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <br>
-
-                <p class="section-title">3. Samāsa (Compounds)</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>समस्तपदम्</th>
-                            <th>पूर्वपदम्</th>
-                            <th>उत्तरपदम्</th>
-                            <th>समास-प्रकारः</th>
-                            <th>Meaning</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>धर्मज्ञः</td><td>धर्म</td><td>ज्ञ (कृदन्तः)</td><td>Upapada-Tatpuruṣa</td><td>Knower of Dharma</td></tr>
-                        <tr><td>कृतज्ञः</td><td>कृत</td><td>ज्ञ (कृदन्तः)</td><td>Upapada-Tatpuruṣa</td><td>Grateful</td></tr>
-                        <tr><td>सत्यवाक्यः</td><td>सत्य</td><td>वाक्य</td><td>Bahuvrīhi</td><td>One of true speech</td></tr>
-                        <tr><td>दृढव्रतः</td><td>दृढ</td><td>व्रत</td><td>Bahuvrīhi</td><td>One of firm vows</td></tr>
-                    </tbody>
-                </table>
-                <br>
-
-                <p class="section-title">4. Sandhi</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>सन्धियुक्त-पदम्</th>
-                            <th>विच्छेदः (Split)</th>
-                            <th>विच्छेद-अर्थः (Meaning)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>को नु</td><td>कः + नु</td><td>Who + (particle)</td></tr>
-                        <tr><td>कोन्वस्मिन्</td><td>को नु + अस्मिन्</td><td>Who + in this</td></tr>
-                        <tr><td>गुणवान्कश्च</td><td>गुणवान् + कः + च</td><td>Virtuous + who + and</td></tr>
-                        <tr><td>धर्मज्ञश्च</td><td>धर्मज्ञः + च</td><td>Knower of dharma + and</td></tr>
-                    </tbody>
-                </table>
-
-                <br>
-                <div class="anvaya-section">
-                    <p>अन्वय (Prose Order) - अस्मिन् लोके साम्प्रतं गुणवान् कः नु? वीर्यवान् च, धर्मज्ञः च, कृतज्ञः च, सत्यवाक्यः च, दृढव्रतः च कः (अस्ति)? ।</p>
-                </div>
-
-
-
-            </div>
-        </section>
-
-
-        <section id="chapter1">
-            <p style="color: #999; font-size: 1.2rem; text-transform: uppercase;">Arjun Viṣhād Yog</p>
-            <h1>सर्गः १ (Chapter 1)</h1>
-            
-            <div class="verse-card">
-                <span id="BG1-1" class="verse-num">१-१</span>
-                <p class="sanskrit">धृतराष्ट्र उवाच |<br>धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः |<br>मामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय ॥१-१॥</p>
-                <div class="translation">
-                    <strong>Translation:</strong> Dhritarashtra said: O Sanjay, after gathering on the holy field of Kurukshetra, and desiring to fight, what did my sons and the sons of Pandu do?
-                </div>
-            </div>
-        </section>
-
-
-        <section id="Mantra1">
-            <p style="color: #999; font-size: 1.2rem; text-transform: uppercase;">Maha Mrityunjaya Mantra</p>
-            
-            <div class="verse-card">
-                <span class="verse-num"></span>
-                <p class="sanskrit">ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम् ।<br>उर्वारुकमिव बन्धनान् मृत्योर्मुक्षीय मामृतात् ॥</p>
-                <div class="translation">
-                    <strong>Translation:</strong> (We) worship the Three-eyed Lord, who is fragrant and the nourisher of all growth. May He liberate me from death, just as a cucumber is released from its bondage (the vine), but may He never separate me from immortality.
-                </div>
-                <br>
-                <p>Table 1: Nouns</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>पदम् (Word)</th>
-                            <th>प्रातिपदिकम् (Base)</th>
-                            <th>लिङ्गम् (Gender)</th>
-                            <th>विभक्तिः (Case)</th>
-                            <th>वचनम् (Number)</th>
-                            <th>अर्थः (English)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>त्र्यम्बकम्</td>
-                            <td>त्र्यम्बक</td>
-                            <td>पुंल्लिङ्गम्</td>
-                            <td>द्वितीया</td>
-                            <td>एकवचनम्</td>
-                            <td>To the three-eyed one</td>
-                        </tr>
-                        <tr>
-                            <td>सुगन्धिम्</td>
-                            <td>सुगन्धि</td>
-                            <td>पुंल्लिङ्गम्</td>
-                            <td>द्वितीया</td>
-                            <td>एकवचनम्</td>
-                            <td>To the fragrant one</td>
-                        </tr>
-                        <tr>
-                            <td>पुष्टिवर्धनम्</td>
-                            <td>पुष्टिवर्धन</td>
-                            <td>पुंल्लिङ्गम्</td>
-                            <td>द्वितीया</td>
-                            <td>एकवचनम्</td>
-                            <td>To the nourisher of growth</td>
-                        </tr>
-                        <tr>
-                            <td>उर्वारुकम्</td>
-                            <td>उर्वारुक</td>
-                            <td>नपुंसकलिङ्गम्</td>
-                            <td>द्वितीया</td>
-                            <td>एकवचनम्</td>
-                            <td>The cucumber</td>
-                        </tr>
-                        <tr>
-                            <td>बन्धनात्</td>
-                            <td>बन्धन</td>
-                            <td>नपुंसकलिङ्गम्</td>
-                            <td>पञ्चमी</td>
-                            <td>एकवचनम्</td>
-                            <td>From bondage/attachment</td>
-                        </tr>
-                        <tr>
-                            <td>मृत्योः</td>
-                            <td>मृत्यु</td>
-                            <td>पुंल्लिङ्गम्</td>
-                            <td>पञ्चमी</td>
-                            <td>एकवचनम्</td>
-                            <td>From death</td>
-                        </tr>
-                        <tr>
-                            <td>अमृतात्</td>
-                            <td>अमृत</td>
-                            <td>नपुंसकलिङ्गम्</td>
-                            <td>पञ्चमी</td>
-                            <td>एकवचनम्</td>
-                            <td>From immortality</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <br>
-
-                <p>Table 2: Verbs</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>क्रियापदम् (Verb)</th>
-                            <th>धातुः (Root)</th>
-                            <th>लकारः (Tense/Mood)</th>
-                            <th>पदम् (Voice)</th>
-                            <th>पुरुषः (Person)</th>
-                            <th>वचनम् (Number)</th>
-                            <th>अर्थः (Meaning)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>यजामहे</td>
-                            <td>यज् (to worship)</td>
-                            <td>लट्-लकारः</td>
-                            <td>आत्मनेपदम्</td>
-                            <td>उत्तम-पुरुषः</td>
-                            <td>बहुवचनम्</td>
-                            <td>We worship</td>
-                        </tr>
-                        <tr>
-                            <td>मुक्षीय</td>
-                            <td>मुच् (to release)</td>
-                            <td>आशीर्लिङ्-लकारः</td>
-                            <td>आत्मनेपदम्</td>
-                            <td>उत्तम-पुरुषः</td>
-                            <td>एकवचनम्</td>
-                            <td>May I be liberated</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <br>
-
-                <p>Table 3: Samāsa</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>समस्तपदम्</th>
-                            <th>पूर्वपदम् (प्रकारः)</th>
-                            <th>उत्तरपदम् (प्रकारः)</th>
-                            <th>समास-प्रकारः</th>
-                            <th>Meaning (English)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>त्र्यम्बकम्</td>
-                            <td>त्रि (संख्यावाचकः)</td>
-                            <td>अम्बक (संज्ञा)</td>
-                            <td>बहुव्रीहिः</td>
-                            <td>He who has three eyes.</td>
-                        </tr>
-                        <tr>
-                            <td>सुगन्धिम्</td>
-                            <td>सु (उपसर्गः)</td>
-                            <td>गन्धि (संज्ञा)</td>
-                            <td>बहुव्रीहिः</td>
-                            <td>One who possesses fragrance.</td>
-                        </tr>
-                        <tr>
-                            <td>पुष्टिवर्धनम्</td>
-                            <td>पुष्टि (संज्ञा)</td>
-                            <td>वर्धन (कृदन्तः - संज्ञा)</td>
-                            <td>षष्ठी-तत्पुरुषः</td>
-                            <td>The nourisher of prosperity.</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <br>
-
-                <p>Table 4: Sandhi</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>सन्धियुक्त-पदम्</th>
-                            <th>विच्छेदः (Word Split)</th>
-                            <th>विच्छेद-अर्थः (Meaning)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>उर्वारुकमिव</td>
-                            <td>उर्वारुकम् + इव</td>
-                            <td>Cucumber + like</td>
-                        </tr>
-                        <tr>
-                            <td>बन्धनान्मृत्योः</td>
-                            <td>बन्धनात् + मृत्योः</td>
-                            <td>From bondage + from death</td>
-                        </tr>
-                        <tr>
-                            <td>मृत्योर्मुक्षीय</td>
-                            <td>मृत्योः + मुक्षीय</td>
-                            <td>From death + may I be liberated</td>
-                        </tr>
-                        <tr>
-                            <td>मामृतात्</td>
-                            <td>मा + अमृतात्</td>
-                            <td>Not + from immortality</td>
-                        </tr>
-                    </tbody>
-                </table>
-            <br>
-            <div class="anvaya-section">
-                <p>अन्वय (Prose Order) - (वयम्) सुगन्धिं पुष्टिवर्धनं त्र्यम्बकं यजामहे। उर्वारुकम् इव बन्धनात् मृत्योः मुक्षीय, अमृतात् मा (मुक्षीय)।</p>
-            </div>
-        </div>
-    </section>
-
-    </main>
+            // Toggle class for mobile (overlay)
+            sidebar.classList.toggle('active');
+        });
+    </script>
 
 </body>
-
 </html>
